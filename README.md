@@ -35,8 +35,12 @@ Supports every Intel-based macOS release, from **Mac OS X 10.4 Tiger** through *
 
 ## Download
 
-* Get the latest OpenCore-ISO: 👉 [Release page](https://github.com/LongQT-sea/OpenCore-ISO/releases)
-* For macOS installers and recovery ISOs: 👉 [LongQT-sea/macos-iso-builder](https://github.com/LongQT-sea/macos-iso-builder)
+* Latest OpenCore-ISO: [LongQT-OpenCore-v0.7.iso](https://github.com/LongQT-sea/OpenCore-ISO/releases/download/v0.7/LongQT-OpenCore-v0.7.iso)
+* For legit macOS installers and recovery ISOs: [LongQT-sea/macos-iso-builder](https://github.com/LongQT-sea/macos-iso-builder)
+
+> [!CAUTION]
+> These iso are **true CD/DVD ISO image**.
+> Add them to your VM as a **CD/DVD drive**. Do **NOT** change **`media=cdrom`** to **`media=disk`** in the VM config.
 
 > [!TIP]
 > Run [**`Create_macOS_ISO.command`**](/Create_macOS_ISO.command) inside your VM to download the full macOS installer from Apple and generate a proper DVD-format macOS installer ISO.
@@ -67,12 +71,12 @@ Supports every Intel-based macOS release, from **Mac OS X 10.4 Tiger** through *
 
 * **Machine Type**: q35 (if using **i440fx**, add `+invtsc` CPU flag, see [cpu-models.conf](https://github.com/LongQT-sea/OpenCore-ISO/blob/main/cpu-models.conf))
 * **BIOS**: OVMF (UEFI)
-* **Add EFI Disk**: ✅ Enabled
-* **Pre-Enroll Keys**: ❌ Untick to disable Secure Boot
+* **Add EFI Disk**: [✓] Enabled
+* **Pre-Enroll Keys**: [✗] Untick to disable Secure Boot
 * **QEMU Guest Agent**:
 
-  * ✅ Enable for macOS 10.14 – macOS 26
-  * ❌ Leave as default for macOS 10.4 – macOS 10.13
+  * [✓] Enable for macOS 10.14 – macOS 26
+  * [✗] Leave as default for macOS 10.4 – macOS 10.13
 
 ---
 
@@ -89,7 +93,7 @@ The **disk bus type** depends on your needs:
 | macOS 10.4 – macOS 10.14 | `SATA`                  |
 
 > [!Tip]
-> Choosing `SATA` with ✅ SSD emulation and ✅ Discard enabled is recommended, as it automatically supports TRIM for more efficient storage usage.
+> Choosing `SATA` with [✓] SSD emulation and [✓] Discard enabled is recommended, as it automatically supports TRIM for more efficient storage usage (no need to run `trimforce enable`).
 
 ---
 
@@ -113,31 +117,36 @@ The **disk bus type** depends on your needs:
 | macOS Version            | Recommended CPU Type                               |
 | ------------------------ | -------------------------------------------------- |
 | macOS 10.11 – macOS 26   | `Skylake-Client-v4`, `Skylake-Server-v4` (AVX-512) |
-| macOS 10.4 – macOS 10.10 | `Penryn`                                           |
+| macOS 10.4 – macOS 10.10 | `Nehalem`                                          |
 
 > [!NOTE]
 > **AMD CPUs:**
-> * **macOS 10.4 – macOS 12**, tick ✅ **Advanced**, under **Extra CPU Flags**, turn off `pcid` and `spec-ctrl`. [^amdcpu1]
+> * **macOS 10.4 – macOS 12**, tick [✓] **Advanced**, under **Extra CPU Flags**, turn off `pcid` and `spec-ctrl`. [^amdcpu1]
 > * **macOS 13 – macOS 26**, need to set the CPU manually via the Proxmox VE Shell[^amdcpu2], example:
 >
 >   ```
 >   # For CPUs with AVX2 support
->   qm set [VMID] --args "-cpu Skylake-Client-v4,vendor=GenuineIntel"
+>   qm set [VMID] --args "-cpu Skylake-Client-v4"
 >   
 >   # For CPUs with AVX-512 support
->   qm set [VMID] --args "-cpu Skylake-Server-v4,vendor=GenuineIntel"
+>   qm set [VMID] --args "-cpu Skylake-Server-v4"
 >   ```
+> * If macOS VM fails to boot when using more than 1 CPU core, add `tsc=reliable` to host kernel command line (`/etc/default/grub`).
 > ---
 >  **Intel CPUs:**
 > * Intel HEDT / E5-2xxx v3/v4 need to override CPUID `model`[^intel-hedt], example:
 >
 >   ```
->   qm set [VMID] --args "-cpu Broadwell-noTSX,vendor=GenuineIntel,model=158"
->   qm set [VMID] --args "-cpu Haswell-noTSX,vendor=GenuineIntel,model=158"
+>   qm set [VMID] --args "-cpu Broadwell-noTSX,model=158"
+>   qm set [VMID] --args "-cpu Haswell-noTSX,model=158"
 >   ```
 > * Intel Haswell desktops need to override `stepping` when using `Haswell-noTSX`[^haswell]:
 >   ```
->   qm set [VMID] --args "-cpu Haswell-noTSX,vendor=GenuineIntel,stepping=3"
+>   qm set [VMID] --args "-cpu Haswell-noTSX,stepping=3"
+>   ```
+> * If you need to run nested virtualization software (such as Docker Desktop, VMware Fusion, or VirtualBox) inside macOS VM, use QEMU named CPU model with the `+vmx` CPU flag, example:
+>   ```
+>   qm set [VMID] --args "-cpu Skylake-Client-v4,+vmx"
 >   ```
 > * Avoid using [`host`](https://browser.geekbench.com/v6/cpu/14313138) passthrough CPU types[^hostcpu] — they can be **~30% slower (single-core)** and **~44% slower (multi-core)** compared to [`recommended`](https://browser.geekbench.com/v6/cpu/14205183) CPU types.
 
@@ -148,7 +157,7 @@ For more details, see [QEMU CPU Guide – macOS Guests](https://github.com/LongQ
 ### 7. Memory
 
 * **RAM**: Minimum 2 GB (4 GB or more recommended)
-* Disable ❌ Ballooning Device
+* Disable [✗] Ballooning Device
 
 ---
 
@@ -195,7 +204,7 @@ macOS 10.4 Tiger no-keyboard issue:
    * Copy **`Mount_EFI.command`**, **`ProperTree`**, and **`GenSMBIOS`** to the Desktop for later use when you need to edit **`config.plist`**.
    * You can now remove the **LongQT-OpenCore** ISO CD/DVD from the VM **Hardware** tab.
 
-### 2. To enable iCloud, iMessage, and other iServices:
+### 2. To enable iCloud, iMessage, and other iServices
    * Follow [Dortania iServices](https://dortania.github.io/OpenCore-Post-Install/universal/iservices.html) guide to generate your own SMBIOS.
    * macOS 15 and macOS 26 need to install [VMHide.kext](https://github.com/Carnations-Botanica/VMHide)
 
@@ -217,12 +226,14 @@ macOS 10.4 Tiger no-keyboard issue:
 > ```
 
 > [!Tip]
-> If you need ReBAR enabled for another GPU then you need to set **BAR 0** of the dGPU you want to passthrough to **256MB**, e.g.
+> If you need ReBAR enabled (for multi-GPU systems), set **BAR 0** of the dGPU you intend to passthrough to **256 MB**, example:
 > ```
+> # Unbind from the current driver:
+> echo 0000:01:00.0 > /sys/bus/pci/drivers/amdgpu/unbind
+> echo 0000:01:00.0 > /sys/bus/pci/drivers/vfio-pci/unbind
+> # Set BAR 0 to 256MB:
 > echo 8 > /sys/bus/pci/devices/0000:04:00.0/resource0_resize
 > ```
-> For details on changing BAR size at the OS level, see:
-> https://angrysysadmins.tech/index.php/2023/08/grassyloki/vfio-how-to-enable-resizeable-bar-rebar-in-your-vfio-virtual-machine/
 
 > [!Tip]
 > On modern macOS versions, if you need a dummy virtual sound device (e.g., for **Parsec, Sunshine/MoonLight**), run this in Proxmox shell:
