@@ -1,20 +1,17 @@
 ## About
 
-A carefully crafted OpenCore **ISO** image that makes creating macOS virtual machines on **Proxmox VE** and **QEMU/KVM** straightforward.
+A carefully crafted OpenCore **ISO** image for running macOS virtual machines on **Proxmox VE** and **QEMU/KVM**. Built from scratch with a clean, efficient architecture — no legacy configurations, no kernel patches, true vanilla macOS.
 
-Completely redesigned from scratch with a clean, efficient architecture that eliminates outdated methods and legacy configurations.
-
-Supports every Intel-based macOS release, from **Mac OS X 10.4 Tiger** through **macOS 26 Tahoe**.
+Supports every Intel-based macOS release from **Mac OS X 10.4 Tiger** through **macOS 26 Tahoe**.
 
 > [!TIP]
-> Enjoy true **vanilla macOS** experience with no kernel patches.
-> This is likely the best way to run macOS on AMD hardware while still retaining full hypervisor access to run other VMs.
+> This is likely the best way to run macOS on AMD hardware while retaining full hypervisor access for other VMs.
 
 ## Table of Contents
 
 - [Download](#download)
 - [Quick Start Guide](#quick-start-guide)
-  - [1. Create a New VM](#1-create-a-new-vm-in-the-proxmox-ve-web-interface)
+  - [1. Create a New VM](#1-create-a-new-vm)
   - [2. General](#2-general)
   - [3. OS](#3-os)
   - [4. System](#4-system)
@@ -43,20 +40,21 @@ Supports every Intel-based macOS release, from **Mac OS X 10.4 Tiger** through *
 > Add them to your VM as a **CD/DVD drive**. Do **NOT** change **`media=cdrom`** to **`media=disk`** in the VM config.
 
 > [!TIP]
-> Run [**`Create_macOS_ISO.command`**](/Create_macOS_ISO.command) inside your VM to download the full macOS installer from Apple and generate a proper DVD-format macOS installer ISO.
+> Run [`Create_macOS_ISO.command`](/Create_macOS_ISO.command) inside your VM to download the full macOS installer from Apple and generate a proper DVD-format macOS installer ISO.
 
 ---
 
 ## Quick Start Guide
 
-### 1. Create a New VM in the Proxmox VE web interface
+### 1. Create a New VM
+Open the Proxmox VE web interface and create a new VM.
 
 ---
 
 ### 2. General
 
 * **VM ID**: Any available ID
-* **Name**: Any name you like for the macOS VM
+* **Name**: Any name you like
 
 ---
 
@@ -69,7 +67,7 @@ Supports every Intel-based macOS release, from **Mac OS X 10.4 Tiger** through *
 
 ### 4. System
 
-* **Machine Type**: q35 (if using **i440fx**, add `+invtsc` CPU flag, see [cpu-models.conf](https://github.com/LongQT-sea/OpenCore-ISO/blob/main/cpu-models.conf))
+* **Machine Type**: q35 *(if using **i440fx**, add `+invtsc` CPU flag, see [cpu-models.conf](https://github.com/LongQT-sea/OpenCore-ISO/blob/main/cpu-models.conf))*
 * **BIOS**: OVMF (UEFI)
 * **Add EFI Disk**: [✓] Enabled
 * **Pre-Enroll Keys**: [✗] Untick to disable Secure Boot
@@ -93,7 +91,7 @@ The **disk bus type** depends on your needs:
 | macOS 10.4 – macOS 10.14 | `SATA`                  |
 
 > [!Tip]
-> Choosing `SATA` with [✓] SSD emulation and [✓] Discard enabled is recommended, as it automatically supports TRIM for more efficient storage usage (no need to run `trimforce enable`).
+> Using SATA with **SSD emulation** and **Discard** enabled automatically enables TRIM — no need to run `trimforce enable`.
 
 ---
 
@@ -103,14 +101,15 @@ The **disk bus type** depends on your needs:
 > Follow these CPU settings carefully! Incorrect CPU configuration will cause boot failure.
 
 #### Cores
-
-* Choose based on your hardware: 1 / 2 / 4 / 8 / 16 / 32 / 64
-
+Choose based on your hardware (`power of 2`): 1 / 2 / 4 / 8 / 16 / 32 / 64
 > [!TIP]
-> * For 6 cores: choose 2 cores and 3 sockets
-> * For 12 cores: choose 4 cores and 3 sockets
-> * For 20 cores: choose 4 cores and 5 sockets
-> * For 24 cores: choose 8 cores and 3 sockets
+> For non-power-of-2 counts, use multiple sockets:
+> | Target Cores | Cores | Sockets |
+> |---|---|---|
+> | 6 | 2 | 3 |
+> | 12 | 4 | 3 |
+> | 20 | 4 | 5 |
+> | 24 | 8 | 3 |
 
 #### Type (Model)
 
@@ -131,7 +130,7 @@ The **disk bus type** depends on your needs:
 >   # For CPUs with AVX-512 support
 >   qm set [VMID] --args "-cpu Skylake-Server-v4"
 >   ```
-> * If macOS VM fails to boot when using more than 1 CPU core, add `tsc=reliable` to host kernel command line (`/etc/default/grub`).
+> * If the VM fails to boot with more than 1 core, add `tsc=reliable` to the host kernel command line (`/etc/default/grub`).
 > ---
 >  **Intel CPUs:**
 > * Intel HEDT / E5-2xxx v3/v4 need to override CPUID `model`[^intel-hedt], example:
