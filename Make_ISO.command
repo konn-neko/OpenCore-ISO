@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-ISO_FILE_NAME=LongQT-OpenCore-v0.5.iso
+ISO_FILE_NAME=LongQT-OpenCore-v0.7.iso
 VOL_NAME=LongQT-OpenCore
 SOURCE_DIR=./
 BOOT_IMG=BOOT.img
