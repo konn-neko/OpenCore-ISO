@@ -1,11 +1,13 @@
 ## About
 
-A carefully crafted OpenCore **ISO** image for running macOS virtual machines on **Proxmox VE** and **QEMU/KVM**. Built from scratch with a clean, efficient architecture — no legacy configurations, no kernel patches, true vanilla macOS.
+A carefully crafted OpenCore **ISO** image for running macOS virtual machines on **Proxmox VE** and **QEMU/KVM**.
+Built from scratch with a clean, efficient architecture — no legacy configurations, no OVMF patches, no kernel patches, true vanilla macOS.
 
-Supports every Intel-based macOS release from **Mac OS X 10.4 Tiger** through **macOS 26 Tahoe**.
+Supports every Intel-based macOS release from **[Mac OS X 10.4 Tiger](https://dortania.github.io/OpenCore-Install-Guide/installer-guide/mac-install-dmg.html#acidanthera-images)** through **[macOS 26 Tahoe](https://github.com/LongQT-sea/macos-iso-builder)**.
 
 > [!TIP]
 > This is likely the best way to run macOS on AMD hardware while retaining full hypervisor access for other VMs.
+> Also overcomes a lot of AMD CPU limitations listed on [Dortania guide](https://dortania.github.io/Anti-Hackintosh-Buyers-Guide/CPU.html#cpus-to-avoid).
 
 ## Table of Contents
 
@@ -188,8 +190,9 @@ If you encounter boot issues, check:
 * Secure Boot is **disabled** (`Pre-Enroll Keys` unchecked)
 * The ISO is mounted as a **CD/DVD**, not a disk
 * Try a different **CPU model**
+* For Mac OS X 10.4 Tiger, choose machine type q35, version <= 10.0
 
-macOS 10.4 Tiger no-keyboard issue:
+Legacy OS X no-keyboard issue:
 * Either add `-device usb-kbd` to the QEMU args or run `device_add usb-kbd` in the VM Monitor tab.
 
 ---
