@@ -127,10 +127,10 @@ Choose based on your hardware (`power of 2`): 1 / 2 / 4 / 8 / 16 / 32 / 64
 >
 >   ```
 >   # For CPUs with AVX2 support
->   qm set [VMID] --args "-cpu Skylake-Client-v4"
+>   qm set [VMID] --args "-cpu Skylake-Client-v4,vendor=GenuineIntel"
 >   
 >   # For CPUs with AVX-512 support
->   qm set [VMID] --args "-cpu Skylake-Server-v4"
+>   qm set [VMID] --args "-cpu Skylake-Server-v4,vendor=GenuineIntel"
 >   ```
 > * If the VM fails to boot with more than 1 core, add `tsc=reliable` to the host kernel command line (`/etc/default/grub`).
 > ---
