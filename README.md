@@ -9,7 +9,10 @@ Supports every Intel-based macOS release from **[Mac OS X 10.4 Tiger](https://do
 > This is likely the best way to run macOS on AMD hardware while retaining full hypervisor access for other VMs.
 > Also overcomes a lot of AMD CPU limitations listed on [Dortania guide](https://dortania.github.io/Anti-Hackintosh-Buyers-Guide/CPU.html#cpus-to-avoid).
 
-## Table of Contents
+---
+
+<details>
+<summary>Table of Contents</summary>
 
 - [Download](#download)
 - [Quick Start Guide](#quick-start-guide)
@@ -29,6 +32,7 @@ Supports every Intel-based macOS release from **[Mac OS X 10.4 Tiger](https://do
 - [Credits](#credits)
 - [License & Attribution](#license--attribution)
 - [Disclaimer](#disclaimer)
+</details>
 
 ---
 
@@ -69,7 +73,7 @@ Open the Proxmox VE web interface and create a new VM.
 
 ### 4. System
 
-* **Machine Type**: q35 *(if using **i440fx**, add `+invtsc` CPU flag, see [cpu-models.conf](https://github.com/LongQT-sea/OpenCore-ISO/blob/main/cpu-models.conf))*
+* **Machine Type**: q35
 * **BIOS**: OVMF (UEFI)
 * **Add EFI Disk**: [✓] Enabled
 * **Pre-Enroll Keys**: [✗] Untick to disable Secure Boot
@@ -149,7 +153,7 @@ Choose based on your hardware (`power of 2`): 1 / 2 / 4 / 8 / 16 / 32 / 64
 >   ```
 >   qm set [VMID] --args "-cpu Skylake-Client-v4,+vmx"
 >   ```
-> * Avoid using [`host`](https://browser.geekbench.com/v6/cpu/14313138) passthrough CPU types[^hostcpu] — they can be **~30% slower (single-core)** and **~44% slower (multi-core)** compared to [`recommended`](https://browser.geekbench.com/v6/cpu/14205183) CPU types.
+> * Avoid using `host` passthrough CPU types[^hostcpu] — they can be [**~30% slower (single-core)** and **~44% slower (multi-core)**](https://browser.geekbench.com/v6/cpu/compare/14205183?baseline=14313138) compared to recommended CPU types.
 
 For more details, see [QEMU CPU Guide – macOS Guests](https://github.com/LongQT-sea/qemu-cpu-guide?#macos-guests).
 
